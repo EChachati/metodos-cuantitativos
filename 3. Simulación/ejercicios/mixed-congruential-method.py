@@ -1,14 +1,17 @@
-"""
+""" Ejercicio 5.2
 Utilice el método congruencial mixto para generar las siguientes sucesiones de nº
 aleatorios.
     a) Una sucesión de 10 n.a. enteros de un dígito tal que
      Xn+1  = (Xn + 3)(modulo10) y X0 = 2
+     multiplicator=1, aditive_constant=3, seed=2, module=10
 
     b) Una sucesión de 8 n.a. enteros entre 0 y 7 de un dígito
      tal que 5( )(1 )8 X 1 X módulo n + = n + y X0=1.
+       multiplicator=5, aditive_constant=1, seed=1, module=8
 
     c) Una sucesión de 5 n.a. enteros de un dígito tal que
     61( )(27 100) X 1 X módulo n + = n + y X0=100.
+    multiplicator=61, aditive_constant=27, seed=100, module=100
 """
 
 """
@@ -69,7 +72,7 @@ if __name__ == "__main__":
     generator_A = MixedCongruentialGenerator(
         multiplicator=1, aditive_constant=3, seed=2, module=10
     )
-    
+
     numbers = generator_A.get_random_number(10)
     for number in numbers:
         print(f"{number[0]} ({number[1]})")

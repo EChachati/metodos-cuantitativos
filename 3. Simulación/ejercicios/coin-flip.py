@@ -1,4 +1,4 @@
-"""
+"""Ejericicio 5.1.a
 Utilice los números aleatorios de un dígito, 5, 2, 4, 9, 7,
 para generar observaciones aleatorias para la tirada al aire de una moneda
 """

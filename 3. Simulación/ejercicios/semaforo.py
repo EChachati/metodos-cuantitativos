@@ -1,4 +1,4 @@
-"""
+""" Ejercicio 5.1.b
 Utilice los números aleatorios de un dígito, 5, 2, 4, 9, 7,
 para generar observaciones aleatorias para El color de la luz
 del semáforo que llega al azar, si el 40% del tiempo está en verde, 10%
