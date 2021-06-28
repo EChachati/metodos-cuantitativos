@@ -1,11 +1,11 @@
 # Simulation For M/M/1 Systems
 
 from math import e, factorial
-from random import randint
+from random import randint, random
 
 
 class MM1:
-    def __init__(self, clients, capacity):
+    def __init__(self, clients, capacity):  # Inicialización
         """
         Número medio de llegadas por unidad de tiempo = λ = {self.__lambda}
         Numero medio de paquetes que el servidor puede atender por unidad de tiempo = µ = {self.__mu}
@@ -24,6 +24,11 @@ class MM1:
         self.__ls = self.__lambda * self.__ws
         self.__lq = self.__lambda * self.__wq
         self.__p0 = (1 - self.__p)
+
+        self.acummulated_probabilities_0_5_clients = self.get_accumulated_probabilities_to_n_clients(
+            5)
+
+        self.probabilities_0_5_clients = self.get_probabilities_to_n_clients(5)
 
         self.current_clients = 0
         self.total_clients = 0
@@ -54,6 +59,20 @@ class MM1:
             probabilities.append(actual)
         return probabilities
 
+    def probabilitie_client_to_leave(self, time=1):
+        """Probabilidad de que un cliente salga del sistema en T tiempo"""
+        return (e ** (-self.__mu * (1-self.__p) * time))
+
+    def print_probabilities_clients_arriving(self):
+        """Imprime las probabilidad de que lleguen N clientes en un minuto"""
+        probabilities = self.probabilities_0_5_clients
+        print(f"""Probabilidades de que Lleguen N clientes en un minuto:""")
+        for i, probabilitie in enumerate(probabilities):
+            print(f"Llegan {i} clientes: {round(probabilitie*100,2)} %")
+        print(
+            f"Llegan {len(probabilities)} clientes: {round(100 - self.acummulated_probabilities_0_5_clients[len(probabilities)-1]*100,2)} %")
+        print()
+
     def __str__(self):
         return f"""
         Número medio de llegadas por unidad de tiempo = λ = {self.__lambda}
@@ -65,31 +84,6 @@ class MM1:
         Número medio de paquetes en Cola = Lq = {self.__lq}
         Probabilidad de que no haya paquetes en sistema = P0 = {self.__p0}
         """
-
-
-def initialize(clients_per_minute, capacity_per_minute):
-
-    # clients_per_minute = 0.75
-    # capacity_per_minute = 1
-
-    QUEUE = MM1(clients_per_minute, capacity_per_minute)
-
-    probabilities = (QUEUE.get_accumulated_probabilities_to_n_clients(4))
-    print(f"""Probabilidades de que Lleguen N clientes en un minuto:""")
-    for i, probabilitie in enumerate(QUEUE.get_probabilities_to_n_clients(4)):
-        print(f"Llegan {i} clientes: {round(probabilitie*100,2)} %")
-
-    print(
-        f"Llegan {len(probabilities)} clientes: {round(100 - probabilities[len(probabilities)-1]*100,2)} %")
-    print()
-
-    probabilities = [int(probabilitie*100000)
-                     for probabilitie in probabilities]
-
-    return {
-        "queue": QUEUE,
-        "probabilities": probabilities
-    }
 
 
 def simulation(clients_per_minute, capacity_per_minute, time: int = 60):
@@ -104,9 +98,12 @@ def simulation(clients_per_minute, capacity_per_minute, time: int = 60):
     incrementos de tiempos fijos
     """
 
-    initialized_data = initialize(clients_per_minute, capacity_per_minute)
-    QUEUE = initialized_data["queue"]
-    probabilities = initialized_data["probabilities"]
+    QUEUE = MM1(clients_per_minute, capacity_per_minute)
+    probabilities = QUEUE.acummulated_probabilities_0_5_clients
+    probabilities = [int(probabilitie*100000)
+                     for probabilitie in probabilities]
+    QUEUE.print_probabilities_clients_arriving()
+    probabilitie_client_to_leave = QUEUE.probabilitie_client_to_leave(time=1)
 
     for minute in range(1, time+1):  # Rutina de Tiempo
         print(
@@ -115,8 +112,12 @@ def simulation(clients_per_minute, capacity_per_minute, time: int = 60):
         # Inicio rutina de Evento
 
         if QUEUE.current_clients > 0:
-            print("\t\t\t\t Ha salido un cliente")
-            QUEUE.current_clients -= 1
+            random_float = random()
+            if random_float <= probabilitie_client_to_leave:
+                QUEUE.current_clients -= 1
+                print("\t\t\t\t Ha salido un cliente")
+            else:
+                print("\t\t\t\t No ha salido ningún cliente")
 
         for i, probabilitie in enumerate(probabilities):
             if i == 0 and random_number < probabilitie:
@@ -163,7 +164,7 @@ def simulation(clients_per_minute, capacity_per_minute, time: int = 60):
 def run():
     print("""
 
-||===========================================================================================||
+//===========================================================================================\\
 ||                                                                                           ||
 ||    Suponga que en una estación con un solo servidor llegan en promedio 0.75 clientes      ||
 ||    por minuto, Se tiene capacidad para atender en promedio a 1 clientes por minuto.       ||
@@ -174,12 +175,12 @@ def run():
 ||    Simulación Orientada a los intervalos: el reloj de simulación es avanzado a            ||
 ||    incrementos de tiempos fijos                                                           ||
 ||                                                                                           ||
-||===========================================================================================||
+\\===========================================================================================//
 
     """)
     clients_per_minute = 0.75
     capacity_per_minute = 1
-    
+
     simulation(clients_per_minute, capacity_per_minute, time=60)
 
 
