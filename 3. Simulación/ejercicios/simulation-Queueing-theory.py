@@ -7,9 +7,14 @@ from random import randint
 class MM1:
     def __init__(self, clients, capacity):
         """
-        - clients = λ = Número medio de llegadas por unidad de tiempo
-        - capacity = µ = Numero medio de paquetes que el servidor puede atender por unidad de tiempo
-        - AverageTimeInSystem = W
+        Número medio de llegadas por unidad de tiempo = λ = {self.__lambda}
+        Numero medio de paquetes que el servidor puede atender por unidad de tiempo = µ = {self.__mu}
+        Tiempo Medio que permanece un paquete en sistema = Ws = {self.__ws}
+        Tiempo medio de espera en la cola = Wq = {self.__wq}
+        Intensidad de Trafico en el Sistema = p = {self.__p}
+        Número medio de paquetes en Sistema = Ls = {self.__ls}
+        Número medio de paquetes en Cola = Lq = {self.__lq}
+        Probabilidad de que no haya paquetes en sistema = P0 = {self.__p0}
         """
         self.__lambda = clients
         self.__mu = capacity
@@ -103,7 +108,7 @@ def simulation(clients_per_minute, capacity_per_minute, time: int = 60):
     QUEUE = initialized_data["queue"]
     probabilities = initialized_data["probabilities"]
 
-    for minute in range(time+1):  # Rutina de Tiempo
+    for minute in range(1, time+1):  # Rutina de Tiempo
         print(
             f"\n----------------------------------------- Minuto {minute} -----------------------------------------")
         random_number = randint(1, 100000)
@@ -156,9 +161,25 @@ def simulation(clients_per_minute, capacity_per_minute, time: int = 60):
 
 
 def run():
-    print()
+    print("""
+
+||===========================================================================================||
+||                                                                                           ||
+||    Suponga que en una estación con un solo servidor llegan en promedio 0.75 clientes      ||
+||    por minuto, Se tiene capacidad para atender en promedio a 1 clientes por minuto.       ||
+||                                                                                           ||
+||    Modelo orientado a los eventos: Verifica la cantidad de clientes que pueden estar      ||
+||    en la cola y cuantos pueden entrar cada minuto a lo largo de una hora                  ||
+||                                                                                           ||
+||    Simulación Orientada a los intervalos: el reloj de simulación es avanzado a            ||
+||    incrementos de tiempos fijos                                                           ||
+||                                                                                           ||
+||===========================================================================================||
+
+    """)
     clients_per_minute = 0.75
     capacity_per_minute = 1
+    
     simulation(clients_per_minute, capacity_per_minute, time=60)
 
 
